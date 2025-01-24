@@ -2,10 +2,11 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import viewsets
-from .serializers import BookSerializer,BookModelSerializer
+from rest_framework import viewsets,filters
+from .serializers import BookSerializer,BookModelSerializer,PublisherSerializer
 
-from .models import Book
+from .models import Book,Publisher
+
 # Create your views here.
 class BookListView(APIView):
     def get(self,request):
@@ -71,7 +72,12 @@ class BookViewsets(viewsets.ModelViewSet):
     queryset=Book.objects.all()
     serializer_class=BookModelSerializer
 
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields=['title','published_date','author']
 
+class PublisherViewset(viewsets.ModelViewSet):
+    queryset=Publisher.objects.all()
+    serializer_class=PublisherSerializer
 
     
         

@@ -4,6 +4,7 @@ from . import views
 
 router=DefaultRouter()
 router.register(r'book-viewset',views.BookViewsets)
+router.register(r'publishers',views.PublisherViewset)
 urlpatterns = [
     path('books/',views.BookListView.as_view(),name="books"),
     path('books-model-list/',views.BookListModelView.as_view(),name="book_model_list"),
