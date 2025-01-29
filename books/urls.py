@@ -12,5 +12,8 @@ urlpatterns = [
     path('partial-update-book/<int:id>/',views.partial_update_book,name="partial_update_book"),
     path('delete-book/<int:id>/',views.delete_book,name='delete_book'),
     
-    path('',include(router.urls))
+    path('',include(router.urls)),
+    
+    path('signup/',views.signup,name="signup"),
+    path('login/',views.login,name="login"),
 ]

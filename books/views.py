@@ -3,9 +3,11 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import viewsets,filters
-from .serializers import BookSerializer,BookModelSerializer,PublisherSerializer
-
+from .serializers import BookSerializer,BookModelSerializer,PublisherSerializer,UserSerializer
+from django.contrib.auth.hashers import make_password
+from rest_framework.authtoken.models import Token
 from .models import Book,Publisher
+from django.contrib.auth.models import User
 
 # Create your views here.
 class BookListView(APIView):
@@ -79,6 +81,29 @@ class BookViewsets(viewsets.ModelViewSet):
 class PublisherViewset(viewsets.ModelViewSet):
     queryset=Publisher.objects.all()
     serializer_class=PublisherSerializer
+ 
+@api_view(['POST'])    
+def signup(request):
+    serializer = UserSerializer(data=request.data)
+    if serializer.is_valid():
+        hashPassword=make_password(request.data['password'])
+        newUser = serializer.save(password=hashPassword)
+        
+        token = Token.objects.create(user=newUser)
+        return Response({'token':token.key,'user':serializer.data})
+    return Response(serializer.errors,status=400)
+
+@api_view(['POST']) 
+def login(request):
+    user=User.objects.get(username=request.data['username'])
+    if not user.check_password(request.data['password']):
+        return Response({'details':'invalid credentials'},status=404)
+    
+    token,created = Token.objects.get_or_create(user=user)
+    serializer=UserSerializer(instance=user)
+    return Response({'token':token.key,'user':serializer.data})
+    
+    
 
     
         
