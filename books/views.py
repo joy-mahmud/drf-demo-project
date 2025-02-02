@@ -102,6 +102,27 @@ def login(request):
     token,created = Token.objects.get_or_create(user=user)
     serializer=UserSerializer(instance=user)
     return Response({'token':token.key,'user':serializer.data})
+
+from rest_framework.decorators import authentication_classes,permission_classes
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def logout(request):
+    try:
+        request.user.auth_token.delete()
+        return Response({'message':"user successfully logged out"}, status=200)
+    except Exception:
+        return Response({'error':"something went wrong"},status=500)
+    
+    
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def testToken(request):
+    return Response({'msg':"passed"})
     
     
 

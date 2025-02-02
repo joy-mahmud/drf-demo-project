@@ -13,9 +13,14 @@ class PublisherSerializer(serializers.ModelSerializer):
     
 class BookModelSerializer(serializers.ModelSerializer):
     publisher=PublisherSerializer()
+    summary = serializers.SerializerMethodField()
     class Meta:
         model=Book
-        fields="__all__"
+        # fields="__all__"
+        fields=['id','title','author','publisher','published_date','summary']
+        
+    def get_summary(self,obj):
+        return f"{obj.title} by {obj.author} published on {obj.published_date}"
     
     def create(self, validated_data):
         publisher_data = validated_data.pop('publisher')
